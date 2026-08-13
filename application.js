@@ -1,8 +1,7 @@
-require('@ostro/support/helpers')
 const path = require('path')
 const fs = require('fs')
 const ObjectSet = require('lodash.set')
-const { IsClass, isFunction, isset } = require('@ostro/support/function')
+const { IsClass, isFunction, isset, is_null } = require('@ostro/support/function')
 const ApplicationContract = require('@ostro/contracts/container/application')
 const { Macroable } = require('@ostro/support/macro')
 
@@ -37,7 +36,7 @@ class Application extends Macroable.extend(ApplicationContract) {
         if (Array.isArray($callback)) {
             $callback = $callback[0][$callback[1]].bind($callback[0])
         }
-        return $callback.apply({ $app: this }, ...$parameters);
+        return $callback.apply({ $app: this }, $parameters);
     }
 
     factory($abstract) {
