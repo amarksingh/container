@@ -55,7 +55,7 @@ class Application extends Macroable.extend(ApplicationContract) {
 
     whenHas(key, done = () => { }, error = () => { }) {
         key = this[key]
-        if (typeof key != undefined) {
+        if (typeof key != 'undefined') {
             done(key)
         } else {
             error()
@@ -158,7 +158,7 @@ class Application extends Macroable.extend(ApplicationContract) {
                 }
 
             } else if (typeof callback == 'string') {
-                return this.bind(key, callback, $parameters, $shared)
+                return this.bind(key, this.loadPath(callback), $parameters, shared)
             }
         }
         this.$bindings[key] = { callback, shared, parameters: $parameters }
@@ -167,7 +167,7 @@ class Application extends Macroable.extend(ApplicationContract) {
     }
 
     bound(key) {
-        return this.$bindings[key] && this.$bindings[key].shared == false
+        return Boolean(this.$bindings[key] || this.$instances[key]);
     }
 
     singleton($abstract, $concrete, ...$parameters) {
@@ -225,10 +225,6 @@ class Application extends Macroable.extend(ApplicationContract) {
     environment(environment) {
         environment = Array.isArray(environment) ? environment : [environment];
         return environment.includes(process.env.NODE_ENV)
-    }
-
-    forgetInstance($abstract) {
-        delete this.$instances[$abstract];
     }
 
     instance($abstract, $instance) {

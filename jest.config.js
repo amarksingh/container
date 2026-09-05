@@ -10,7 +10,5 @@ module.exports = {
         '^@ostro/container/(.*)$': '<rootDir>/$1',
         '^@ostro/container$': '<rootDir>/application.js'
     },
-    collectCoverage: true,
-    coverageDirectory: 'coverage',
-    coverageReporters: ['text', 'lcov', 'clover']
+    collectCoverage: false
 };

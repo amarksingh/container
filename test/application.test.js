@@ -129,12 +129,12 @@ describe('Container Application Comprehensive Unit Tests', () => {
             expect(inst2).toBe(inst1);
         });
 
-        test('bound() accurately differentiates transient vs singleton bindings', () => {
+        test('bound() accurately checks if abstract is registered as binding or instance', () => {
             app.bind('transientService', ConfigService);
             app.singleton('singletonService', ConfigService);
 
             expect(app.bound('transientService')).toBe(true);
-            expect(app.bound('singletonService')).toBe(false);
+            expect(app.bound('singletonService')).toBe(true);
             expect(app.bound('unboundService')).toBeFalsy();
         });
 
@@ -143,6 +143,50 @@ describe('Container Application Comprehensive Unit Tests', () => {
             expect(inst).toBeInstanceOf(ConfigService);
             expect(inst.port).toBe(4000);
             expect(inst.host).toBe('192.168.1.1');
+        });
+
+        test('build() invokes plain function without class constructor', () => {
+            function plainFactory(p1, p2) {
+                return { sum: p1 + p2 };
+            }
+            const res = app.build(plainFactory, [10, 20]);
+            expect(res).toEqual({ sum: 30 });
+        });
+
+        test('build() assigns $app on prototype if defined and not set', () => {
+            function CustomProto() {
+                return { custom: true };
+            }
+            CustomProto.prototype = {};
+            const res = app.build(CustomProto);
+            expect(res).toEqual({ custom: true });
+            expect(CustomProto.prototype.$app).toBe(app);
+        });
+
+        test('bind() with string name and no callback requires the module', () => {
+            app.bind('path');
+            const res = app.make('path');
+            expect(res).toBeDefined();
+            expect(typeof res.join).toBe('function');
+        });
+
+        test('bind() when callback is string loads module via loadPath', () => {
+            app.bind('customPathKey', 'path');
+            const inst = app.make('customPathKey');
+            expect(inst).toBeDefined();
+            expect(typeof inst.join).toBe('function');
+        });
+
+        test('make() on module name string loads path when not bound', () => {
+            const fsModule = app.make('fs');
+            expect(fsModule).toBeDefined();
+            expect(typeof fsModule.readFileSync).toBe('function');
+        });
+
+        test('loadPath() supports relative path starting with ./ and non-string dir', () => {
+            const loaded = app.loadPath('./application');
+            expect(loaded).toBeDefined();
+            expect(app.loadPath({ direct: true })).toEqual({ direct: true });
         });
     });
 
@@ -229,6 +273,16 @@ describe('Container Application Comprehensive Unit Tests', () => {
             });
             expect(doneCalled).toBe(true);
             expect(doneVal).toBe('enabled');
+
+            let errorCalled = false;
+            app.whenHas('nonExistentKey', () => {}, () => {
+                errorCalled = true;
+            });
+            expect(errorCalled).toBe(true);
+
+            // test default arguments for done and error
+            app.whenHas('activeSetting');
+            app.whenHas('nonExistentKey');
         });
 
         test('environment() validates NODE_ENV against string or array', () => {
