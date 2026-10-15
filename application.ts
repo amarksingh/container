@@ -1,3 +1,5 @@
+import type { IContainer } from '@ostro/contracts/container/application';
+
 const path = require('path');
 const fs = require('fs');
 const ObjectSet = require('lodash.set');
@@ -8,7 +10,7 @@ const { Macroable } = require('@ostro/support/macro');
 /**
  * Service container and dependency injection application core.
  */
-class Application extends Macroable.extend(ApplicationContract) {
+class Application extends Macroable.extend(ApplicationContract) implements IContainer {
 
     /**
      * The container's shared instances cache.
