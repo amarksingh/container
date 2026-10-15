@@ -1,20 +1,25 @@
-const Application = require('../application');
+import Application from '../application';
 
 class ConfigService {
-    constructor(port = 3000, host = 'localhost') {
+    port: number;
+    host: string;
+    options: { port: number; host: string };
+    declare $app?: any;
+
+    constructor(port: number = 3000, host: string = 'localhost') {
         this.port = port;
         this.host = host;
         this.options = { port, host };
     }
 
-    getOptionCount() {
+    getOptionCount(): number {
         return Object.keys(this.options).length;
     }
 }
 
 describe('Container Application Comprehensive Unit Tests', () => {
 
-    let app;
+    let app: Application;
 
     beforeEach(() => {
         app = new Application();
