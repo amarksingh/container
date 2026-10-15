@@ -20,7 +20,7 @@ module.exports = {
         "^@ostro/contracts/(.*)$": "<rootDir>/../contracts/$1",
         "^@ostro/contracts$": "<rootDir>/../contracts",
         "^@ostro/container/(.*)$": "<rootDir>/$1",
-        "^@ostro/container$": "<rootDir>/application.js"
+        "^@ostro/container$": "<rootDir>/application"
     },
     "collectCoverage": false
 };
