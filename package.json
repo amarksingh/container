@@ -2,9 +2,11 @@
   "name": "@ostro/container",
   "version": "1.0.5",
   "description": "Container module for OstroJS",
-  "main": "application.ts",
+  "main": "build/application.js",
   "scripts": {
-    "test": "npx c8 npx jest"
+    "test": "npx c8 npx jest",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@ostro/support": "^1.2.0",
@@ -29,5 +31,19 @@
   "bugs": {
     "url": "https://github.com/ostrojs/container/issues"
   },
-  "homepage": "https://github.com/ostrojs/container#readme"
+  "homepage": "https://github.com/ostrojs/container#readme",
+  "types": "build/application.d.ts",
+  "files": [
+    "build"
+  ],
+  "exports": {
+    ".": {
+      "types": "./build/application.d.ts",
+      "default": "./build/application.js"
+    },
+    "./*": {
+      "types": "./build/*.d.ts",
+      "default": "./build/*.js"
+    }
+  }
 }
