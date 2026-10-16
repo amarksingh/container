@@ -455,4 +455,4 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
 
 }
 
-export = Application;
+export default Application;
