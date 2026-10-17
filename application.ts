@@ -23,32 +23,32 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
     /**
      * The container's shared instances cache.
      */
-    $instances: Record<string, any> = {};
+    public $instances: Record<string, any> = {};
 
     /**
      * The container's bindings definitions.
      */
-    $bindings: Record<string, BindingDefinition> = {};
+    public $bindings: Record<string, BindingDefinition> = {};
 
     /**
      * The registered type aliases.
      */
-    $aliases: Record<string, string> = {};
+    public $aliases: Record<string, string> = {};
 
     /**
      * The resolved types registry.
      */
-    $resolved: Record<string, boolean> = {};
+    public $resolved: Record<string, boolean> = {};
 
     /**
      * The container's scoped instances.
      */
-    $scopedInstances: Record<string, any> = {};
+    public $scopedInstances: Record<string, any> = {};
 
     /**
      * The globally set current container instance.
      */
-    $instance: Application | null = null;
+    public $instance: Application | null = null;
 
     /**
      * Register global aliases on the Node.js global object.
@@ -56,7 +56,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param alias - Key-value map of global alias names to target objects/classes.
      * @returns void
      */
-    alias(alias: Record<string, any> = {}): void {
+    public alias(alias: Record<string, any> = {}): void {
         for (const aliasKey in alias) {
             (global as any)[aliasKey] = alias[aliasKey];
         }
@@ -69,7 +69,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Parameters to pass on invocation.
      * @returns Wrapped function.
      */
-    wrap($callback: Function, $parameters: any[] = []): Function {
+    public wrap($callback: Function, $parameters: any[] = []): Function {
         return function (this: any) {
             return this.apply($callback, $parameters);
         };
@@ -83,7 +83,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Additional parameters.
      * @returns The callback execution result.
      */
-    call<T = any>($callback: any, $parameters: any[] = []): T {
+    public call<T = any>($callback: any, $parameters: any[] = []): T {
         if (typeof $callback === 'function') {
             $callback = $callback(this);
         }
@@ -100,7 +100,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $abstract - The abstract identifier to resolve.
      * @returns Closure resolving the abstract.
      */
-    factory<T = any>($abstract: any): () => T {
+    public factory<T = any>($abstract: any): () => T {
         return (): T => {
             return this.make<T>($abstract);
         };
@@ -114,7 +114,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Parameters to construct the instance.
      * @returns Resolved instance.
      */
-    makeWith<T = any>($abstract: any, ...$parameters: any[]): T {
+    public makeWith<T = any>($abstract: any, ...$parameters: any[]): T {
         return this.make<T>($abstract, ...$parameters);
     }
 
@@ -126,7 +126,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Arguments to pass to constructor/factory.
      * @returns The resolved instance.
      */
-    make<T = any>($abstract: any, ...$parameters: any[]): T {
+    public make<T = any>($abstract: any, ...$parameters: any[]): T {
         return this.resolve<T>($abstract, $parameters, true);
     }
 
@@ -156,7 +156,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $make - Whether resolution was triggered via make().
      * @returns The resolved object or undefined.
      */
-    resolve<T = any>($abstract: any, $parameters: any[] = [], $make: boolean = false): T {
+    public resolve<T = any>($abstract: any, $parameters: any[] = [], $make: boolean = false): T {
         if (typeof $abstract === 'string') {
             if (this.$instances[$abstract]) {
                 return this.$instances[$abstract];
@@ -200,7 +200,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param dir - Module identifier or relative/absolute path.
      * @returns Required module export or original value.
      */
-    loadPath<T = any>(dir: unknown): T {
+    public loadPath<T = any>(dir: unknown): T {
         return (typeof dir === 'string' ? require((dir.startsWith('./')) ? path.resolve(dir) : dir) : dir) as T;
     }
 
@@ -210,7 +210,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $concrete - Concrete definition to evaluate.
      * @returns True if buildable (function/class).
      */
-    isBuildable($concrete: unknown): boolean {
+    public isBuildable($concrete: unknown): boolean {
         return typeof $concrete === 'function';
     }
 
@@ -222,7 +222,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Constructor/factory arguments.
      * @returns Constructed instance or raw concrete.
      */
-    build<T = any>($concrete: any, $parameters: any[] = []): T {
+    public build<T = any>($concrete: any, $parameters: any[] = []): T {
         if (this.isBuildable($concrete)) {
             if ($concrete.prototype && typeof $concrete.prototype.$app === 'undefined') {
                 $concrete.prototype.$app = this;
@@ -242,7 +242,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      *
      * @returns Raw bindings dictionary.
      */
-    getBindings(): Record<string, BindingDefinition> {
+    public getBindings(): Record<string, BindingDefinition> {
         return this.$bindings;
     }
 
@@ -252,7 +252,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $abstract - Abstract name or alias.
      * @returns Canonical abstract identifier.
      */
-    getAlias($abstract: string): string {
+    public getAlias($abstract: string): string {
         return isset(this.$aliases[$abstract])
             ? this.getAlias(this.$aliases[$abstract])
             : $abstract;
@@ -267,7 +267,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param shared - Whether binding should be registered as a singleton.
      * @returns The registered callback.
      */
-    bind(key: string | string[], callback?: any, $parameters: any[] = [], shared: boolean = false): any {
+    public bind(key: string | string[], callback?: any, $parameters: any[] = [], shared: boolean = false): any {
         if (typeof key === 'string' && !callback) {
             callback = require(key);
         }
@@ -297,7 +297,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param key - Abstract identifier.
      * @returns True if bound or instantiated.
      */
-    bound(key: string): boolean {
+    public bound(key: string): boolean {
         return Boolean(this.$bindings[key] || this.$instances[key]);
     }
 
@@ -309,7 +309,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $parameters - Additional parameters.
      * @returns The registered singleton definition.
      */
-    singleton($abstract: string, $concrete?: any, ...$parameters: any[]): any {
+    public singleton($abstract: string, $concrete?: any, ...$parameters: any[]): any {
         return this.bind($abstract, $concrete, $parameters, true);
     }
 
@@ -321,7 +321,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $concrete - Factory or constructor.
      * @returns Resolved singleton instance.
      */
-    getOrCreateSingleton<T = any>($abstract: string, $concrete?: any): T {
+    public getOrCreateSingleton<T = any>($abstract: string, $concrete?: any): T {
         if (!this.$instances[$abstract] && typeof $concrete === 'function') {
             this.singleton($abstract, $concrete);
         }
@@ -333,7 +333,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      *
      * @returns void
      */
-    flush(): void {
+    public flush(): void {
         this.$aliases = {};
         this.$resolved = {};
         this.$bindings = {};
@@ -347,7 +347,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $abstract - Abstract identifier to drop.
      * @returns void
      */
-    forgetInstance($abstract: string): void {
+    public forgetInstance($abstract: string): void {
         delete this.$instances[$abstract];
     }
 
@@ -356,7 +356,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      *
      * @returns void
      */
-    forgetInstances(): void {
+    public forgetInstances(): void {
         this.$instances = {};
     }
 
@@ -365,7 +365,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      *
      * @returns void
      */
-    forgetScopedInstances(): void {
+    public forgetScopedInstances(): void {
         for (const $scoped in this.$scopedInstances) {
             delete this.$instances[$scoped];
         }
@@ -376,7 +376,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      *
      * @returns Current or newly created container instance.
      */
-    getInstance(): Application {
+    public getInstance(): Application {
         if (is_null(this.$instance)) {
             this.$instance = new (this.constructor as any)();
         }
@@ -389,7 +389,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $container - Container instance or null to clear.
      * @returns The set instance.
      */
-    setInstance($container: Application | null = null): Application | null {
+    public setInstance($container: Application | null = null): Application | null {
         return this.$instance = $container;
     }
 
@@ -400,7 +400,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param key - Property or service name.
      * @returns The resolved property or container itself.
      */
-    app<T = any>(key?: string): T {
+    public app<T = any>(key?: string): T {
         return (key ? this[key] : this) as T;
     }
 
@@ -410,7 +410,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param environment - Environment name or list of names (e.g. 'production', 'development').
      * @returns True if current environment matches.
      */
-    environment(environment: string | string[]): boolean {
+    public environment(environment: string | string[]): boolean {
         const envs: string[] = Array.isArray(environment) ? environment : [environment];
         return envs.includes(process.env.NODE_ENV as string);
     }
@@ -423,7 +423,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param $instance - Concrete instance to store.
      * @returns The registered instance.
      */
-    instance<T = any>($abstract: string, $instance: T): T {
+    public instance<T = any>($abstract: string, $instance: T): T {
         if ($instance) {
             this.$instances[$abstract] = $instance;
         }
@@ -437,7 +437,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param key - Service or property name.
      * @returns Resolved service.
      */
-    __get(target: Application, key: string): any {
+    public __get(target: Application, key: string): any {
         return target.resolve(key);
     }
 
@@ -449,7 +449,7 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @param value - Value to store.
      * @returns void
      */
-    __set(target: Application, key: string, value: any): void {
+    public __set(target: Application, key: string, value: any): void {
         target[key] = value;
     }
 
