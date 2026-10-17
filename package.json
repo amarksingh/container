@@ -1,6 +1,6 @@
 {
   "name": "@ostro/container",
-  "version": "1.0.5",
+  "version": "2.0.0-alpha.1",
   "description": "Container module for OstroJS",
   "main": "build/application.js",
   "scripts": {
@@ -9,8 +9,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@ostro/support": "^1.2.0",
-    "@ostro/contracts": "^1.0.0",
+    "@ostro/support": "^2.0.0-alpha.1",
+    "@ostro/contracts": "^2.0.0-alpha.1",
     "lodash.set": "^4.3.2"
   },
   "engines": {
