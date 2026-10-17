@@ -201,7 +201,11 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      * @returns Required module export or original value.
      */
     public loadPath<T = any>(dir: unknown): T {
-        return (typeof dir === 'string' ? require((dir.startsWith('./')) ? path.resolve(dir) : dir) : dir) as T;
+        if (typeof dir === 'string') {
+            const mod: any = require((dir.startsWith('./')) ? path.resolve(dir) : dir);
+            return (mod && (mod.__esModule || mod.default) && mod.default ? mod.default : mod) as T;
+        }
+        return dir as T;
     }
 
     /**
