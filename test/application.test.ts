@@ -1,4 +1,4 @@
-import Application from '../application';
+import Application from '../src/application';
 
 class ConfigService {
     port: number;
@@ -189,13 +189,13 @@ describe('Container Application Comprehensive Unit Tests', () => {
         });
 
         test('loadPath() supports relative path starting with ./ and non-string dir', () => {
-            const loaded = app.loadPath('./application');
+            const loaded = app.loadPath('./src/application');
             expect(loaded).toBeDefined();
             expect(app.loadPath({ direct: true })).toEqual({ direct: true });
         });
 
         test('loadPath() supports ~/ resolving against cwd or basePath()', () => {
-            const loadedDefault = app.loadPath('~/application');
+            const loadedDefault = app.loadPath('~/src/application');
             expect(loadedDefault).toBeDefined();
 
             (app as any).basePath = () => __dirname;
