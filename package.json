@@ -9,8 +9,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@ostro/support": "^2.0.0-alpha.1",
     "@ostro/contracts": "^2.0.0-alpha.1",
+    "@ostro/support": "^2.0.0-alpha.1",
     "lodash.set": "^4.3.2"
   },
   "engines": {
@@ -47,7 +47,7 @@
     }
   },
   "devDependencies": {
-    "typescript": "^5.8.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
   }
 }

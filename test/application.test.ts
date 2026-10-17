@@ -193,6 +193,16 @@ describe('Container Application Comprehensive Unit Tests', () => {
             expect(loaded).toBeDefined();
             expect(app.loadPath({ direct: true })).toEqual({ direct: true });
         });
+
+        test('loadPath() supports ~/ resolving against cwd or basePath()', () => {
+            const loadedDefault = app.loadPath('~/application');
+            expect(loadedDefault).toBeDefined();
+
+            (app as any).basePath = () => __dirname;
+            const loadedWithBasePath = app.loadPath('~/application.test');
+            expect(loadedWithBasePath).toBeDefined();
+            delete (app as any).basePath;
+        });
     });
 
     describe('Aliasing & Path Resolution', () => {

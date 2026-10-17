@@ -1,14 +1,8 @@
 import path from 'path';
-import type { IContainer } from '@ostro/contracts/container/application';
+import type { IContainer, BindingDefinition } from '@ostro/contracts/container/application';
 import ApplicationContract from '@ostro/contracts/container/application';
 import { IsClass, isset, is_null } from '@ostro/support/function';
 import { Macroable } from '@ostro/support/macro';
-
-interface BindingDefinition {
-    callback: any;
-    shared: boolean;
-    parameters: any[];
-}
 
 /**
  * Service container and dependency injection application core.
@@ -202,7 +196,14 @@ class Application extends Macroable.extend(ApplicationContract) implements ICont
      */
     public loadPath<T = any>(dir: unknown): T {
         if (typeof dir === 'string') {
-            const mod: any = require((dir.startsWith('./')) ? path.resolve(dir) : dir);
+            let targetPath = dir;
+            if (targetPath.startsWith('~/')) {
+                const basePath = (this as any).basePath ? (this as any).basePath() : process.cwd();
+                targetPath = path.resolve(basePath, targetPath.slice(2));
+            } else if (targetPath.startsWith('./')) {
+                targetPath = path.resolve(targetPath);
+            }
+            const mod: any = require(targetPath);
             return (mod && (mod.__esModule || mod.default) && mod.default ? mod.default : mod) as T;
         }
         return dir as T;
